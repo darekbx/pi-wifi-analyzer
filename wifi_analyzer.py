@@ -6,12 +6,14 @@ import time
 
 from iw_wrapper import Iw
 from options_menu import OptionsMenu
+from bottom_menu import BottomMenu
 from color import Color
 
 '''
 Bottom buttons: scan, reset, menu, histogram / chart
 
 Menu:
+ - scan fast one freq with 20 FPS 
  - set region: list with 6-8 ico codes
  - scan method: active, passive
  - print frequencies from current region
@@ -21,6 +23,7 @@ Menu:
 class WifiAnalyzer():
 
 	iw = Iw()
+	bottomMenu = None
 	optionsMenu = None
 
 	isFullScreen = False
@@ -30,10 +33,11 @@ class WifiAnalyzer():
 	isChart = True
 	isContinusScan = False
 	isActiveScan = True
-	isMenuDisplayed = False
+	isMenuDisplayed = True
 
 	def createScreen(self):
 		pygame.init()
+		self.bottomMenu = BottomMenu()
 		self.font = pygame.font.SysFont("monospace", 14)
 
 		if self.isFullScreen:
@@ -65,20 +69,10 @@ class WifiAnalyzer():
 		self.screen.blit(self.font.render("Active" if self.isActiveScan else "Passive", 1, Color.yellow), (scanMethodOffset, 29))
 
 	def drawBottomMenu(self):
-		self.drawBottomMenuItem("SCAN", 0)
-		self.drawBottomMenuItem("RSET", 79)
-		self.drawBottomMenuItem("MENU", 158)
-		self.drawBottomMenuItem("HIST" if self.isChart else "CHRT", 236)
-
-	def drawBottomMenuItem(self, text, leftOffset):
-		pygame.draw.rect(self.screen, Color.yellow, [15 + leftOffset, 220, 50, 18])
-		label = self.font.render(text, 1, Color.defaultDark)
-		self.screen.blit(label, (23 + leftOffset, 221))
-
-	def drawBorder(self):
-		top = 26
-		pygame.draw.lines(self.screen, Color.defaultLight, False, [(5,top), (5,230), (10,230)], 1)
-		pygame.draw.lines(self.screen, Color.defaultLight, False, [(305,230), (310,230), (310,top), (5,top)], 1)
+		self.bottomMenu.drawMenuItem("SCAN", 0, self.screen)
+		self.bottomMenu.drawMenuItem("RSET", 79, self.screen)
+		self.bottomMenu.drawMenuItem("MENU", 158, self.screen)
+		self.bottomMenu.drawMenuItem("HIST" if self.isChart else "CHRT", 236, self.screen)
 
 		singleLines = [
 			[[69,230], [88,230]], 
@@ -87,6 +81,11 @@ class WifiAnalyzer():
 		]
 		for line in singleLines:
 			pygame.draw.line(self.screen, Color.defaultLight, line[0], line[1], True)
+
+	def drawBorder(self):
+		top = 26
+		pygame.draw.lines(self.screen, Color.defaultLight, False, [(5,top), (5,230), (10,230)], 1)
+		pygame.draw.lines(self.screen, Color.defaultLight, False, [(305,230), (310,230), (310,top), (5,top)], 1)
 
 	def erase(self):
 		self.screen.fill(Color.black)
@@ -97,42 +96,51 @@ class WifiAnalyzer():
 	def loadIwRegion(self):
 		threading.Thread(target=self.iw.loadRegion).start()
 
+	def handleKeys(self):
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				if self.isMenuDisplayed:
+					self.optionsMenu.handleKeys(event)
+				else:
+					self.handleDefaultEvents(event)
+						
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+	
+	def handleDefaultEvents(self, event):
+		if event.key == pygame.K_ESCAPE:
+			pygame.quit()
+			quit()
+		if event.key == pygame.K_0:
+			# Scan
+			a = 0
+		if event.key == pygame.K_1:
+			# Reset
+			b = 0
+
+		if event.key == 51:
+			# Menu
+			self.isMenuDisplayed = not self.isMenuDisplayed 
+			
+		if event.key == 52:
+			# Chart type
+			d = 0
+
 	def loop(self):
 		while True:
 
-			for event in pygame.event.get():
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_ESCAPE:
-						pygame.quit()
-						quit()
-					if event.key == pygame.K_0:
-						# Scan
-						a = 0
-					if event.key == pygame.K_1:
-						# Reset
-						b = 0
-
-					if event.key == 51:
-						# Menu
-						self.isMenuDisplayed = not self.isMenuDisplayed 
-						
-					if event.key == 52:
-						# Chart type
-						d = 0
-							
-				if event.type == pygame.QUIT:
-				    pygame.quit()
-				    quit()
+			self.handleKeys()
 
 			self.erase()
 			self.drawBorder()
 			self.drawHeader()
-			self.drawBottomMenu()
-			self.drawInfo()
 
 			if self.isMenuDisplayed:
 				self.optionsMenu.displayMenu(self.screen)
 			else:
+				self.drawInfo()
+				self.drawBottomMenu()
 				# display chart
 				pygame.draw.lines(self.screen, (80,0,0), False, [(10,100), (150,200), (200,100)], 1)
 			
