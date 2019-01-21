@@ -4,7 +4,7 @@ class ScanResult():
 	frequency = ''
 	level = ''
 
-	def __init__(self, frequency, level):
+	def __init__(self, frequency = '', level = ''):
 		self.frequency = frequency
 		self.level = level
 		return

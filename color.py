@@ -5,3 +5,4 @@ class Color:
 	black = (0, 0, 0)
 	yellow = (240, 198, 116)
 	teal = (94, 141, 135)
+	frequency = (181, 189, 104)

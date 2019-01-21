@@ -12,6 +12,10 @@ from wifi_chart import WifiChart
 from scan_result import ScanResult
 
 '''
+TODO:
+
+In menu select scanning device like wlan0
+
 Bottom buttons: scan, reset, menu, histogram / chart
 
 Menu:
@@ -32,6 +36,7 @@ class WifiAnalyzer():
 	isFullScreen = False
 	font = None
 	screen = None
+	stopScan = False
 
 	isChart = True
 	isContinusScan = False
@@ -96,9 +101,19 @@ class WifiAnalyzer():
 
 	def runAsyncActions(self):
 		self.loadIwRegion()
+		self.scan()
 
 	def loadIwRegion(self):
 		threading.Thread(target=self.iw.loadRegion).start()
+
+	def scan(self):
+		threading.Thread(target=self.scanWorker).start()
+
+	def scanWorker(self):
+		if not self.stopScan:
+			self.iw.scan()
+			pygame.time.delay(500)
+			self.scan()
 
 	def handleKeys(self):
 		for event in pygame.event.get():
@@ -109,11 +124,13 @@ class WifiAnalyzer():
 					self.handleDefaultEvents(event)
 						
 			if event.type == pygame.QUIT:
+				self.stopScan = True
 				pygame.quit()
 				quit()
 	
 	def handleDefaultEvents(self, event):
 		if event.key == pygame.K_ESCAPE:
+			self.stopScan = True
 			pygame.quit()
 			quit()
 		if event.key == pygame.K_0:
@@ -145,34 +162,7 @@ class WifiAnalyzer():
 			else:
 				self.drawInfo()
 				self.drawBottomMenu()
-
-				data = [
-					ScanResult(2412, -90),
-					ScanResult(2412, -50),
-					ScanResult(2412, -40),
-					ScanResult(2417, -76),
-					ScanResult(2422, -87),
-					ScanResult(2427, -54),
-					ScanResult(2427, -59),
-					ScanResult(2427, -78),
-					ScanResult(2427, -44),
-					ScanResult(2447, -91),
-					ScanResult(2447, -88),
-					ScanResult(2452, -33),
-					ScanResult(2452, -45),
-					ScanResult(2452, -55),
-					ScanResult(2462, -64),
-					ScanResult(2472, -75),
-					ScanResult(2472, -73),
-					ScanResult(2472, -71),
-					ScanResult(2472, -55),
-					ScanResult(2472, -78),
-					ScanResult(2472, -79),
-					ScanResult(2472, -80),
-					ScanResult(2484, -66)
-				]
-
-				self.wifiChart.draw(self.screen, data)
+				self.wifiChart.draw(self.screen, self.iw.scanResults)
 			
 			pygame.time.delay(50)
 			pygame.display.update()
