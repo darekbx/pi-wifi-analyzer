@@ -2,11 +2,8 @@ import os
 import pygame
 import itertools
 import random
-import sys
-sys.path.insert(0, '/path/to/application/app/folder')
 
 from sets import Set
-
 from color import Color
 from scan_result import ScanResult
 

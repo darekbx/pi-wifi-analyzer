@@ -3,7 +3,7 @@ import pygame
 from color import Color
 from bottom_menu import BottomMenu
 
-class OptionsMenu:
+class OptionsScreen:
 
 	bottomMenu = None
 
@@ -43,7 +43,6 @@ class OptionsMenu:
 			pygame.draw.circle(screen, Color.defaultLight, (xPos - 12,yPos + 8),3)
 
 		screen.blit(self.font.render(label, 1, Color.defaultLight), (xPos, yPos))
-
 
 	def drawMenuButtons(self, screen):
 		self.bottomMenu.drawMenuArrow(u"\u2191", 0, screen)
