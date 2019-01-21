@@ -8,6 +8,8 @@ from iw_wrapper import Iw
 from options_menu import OptionsMenu
 from bottom_menu import BottomMenu
 from color import Color
+from wifi_chart import WifiChart
+from scan_result import ScanResult
 
 '''
 Bottom buttons: scan, reset, menu, histogram / chart
@@ -23,6 +25,7 @@ Menu:
 class WifiAnalyzer():
 
 	iw = Iw()
+	wifiChart = None
 	bottomMenu = None
 	optionsMenu = None
 
@@ -33,10 +36,11 @@ class WifiAnalyzer():
 	isChart = True
 	isContinusScan = False
 	isActiveScan = True
-	isMenuDisplayed = True
+	isMenuDisplayed = False
 
 	def createScreen(self):
 		pygame.init()
+		self.wifiChart = WifiChart()
 		self.bottomMenu = BottomMenu()
 		self.font = pygame.font.SysFont("monospace", 14)
 
@@ -141,8 +145,34 @@ class WifiAnalyzer():
 			else:
 				self.drawInfo()
 				self.drawBottomMenu()
-				# display chart
-				pygame.draw.lines(self.screen, (80,0,0), False, [(10,100), (150,200), (200,100)], 1)
+
+				data = [
+					ScanResult(2412, -90),
+					ScanResult(2412, -50),
+					ScanResult(2412, -40),
+					ScanResult(2417, -76),
+					ScanResult(2422, -87),
+					ScanResult(2427, -54),
+					ScanResult(2427, -59),
+					ScanResult(2427, -78),
+					ScanResult(2427, -44),
+					ScanResult(2447, -91),
+					ScanResult(2447, -88),
+					ScanResult(2452, -33),
+					ScanResult(2452, -45),
+					ScanResult(2452, -55),
+					ScanResult(2462, -64),
+					ScanResult(2472, -75),
+					ScanResult(2472, -73),
+					ScanResult(2472, -71),
+					ScanResult(2472, -55),
+					ScanResult(2472, -78),
+					ScanResult(2472, -79),
+					ScanResult(2472, -80),
+					ScanResult(2484, -66)
+				]
+
+				self.wifiChart.draw(self.screen, data)
 			
 			pygame.time.delay(50)
 			pygame.display.update()

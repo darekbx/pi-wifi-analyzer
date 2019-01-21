@@ -1,25 +1,14 @@
 import os
 import pygame
 import itertools
-from sets import Set
 import random
-import colorsys
-#
-# TODO: move to file
-#
-class ScanResult():
-	bssid = ''
-	ssid = ''
-	frequency = ''
-	level = ''
+import sys
+sys.path.insert(0, '/path/to/application/app/folder')
 
-	def __init__(self, frequency, level):
-		self.frequency = frequency
-		self.level = level
-		return
+from sets import Set
 
-	def toString(self):
-		return "%s\n%s\n%s\n%s\n" % (self.bssid, self.ssid, self.frfrequencyeq, self.level) 
+from color import Color
+from scan_result import ScanResult
 
 class WifiChart:
 
@@ -35,6 +24,7 @@ class WifiChart:
 
 	def __init__(self):
 		self.font = pygame.font.SysFont("monospace", 12)
+	
 	def draw(self, screen, data):
 		self.drawAxes(screen)
 		#self.drawBarResults(screen, data)
@@ -83,71 +73,3 @@ class WifiChart:
 
 	def chunkSize(self, frequenciesCount):
 		return 300.0 / frequenciesCount
-
-
-
-
-
-
-
-#
-# Mock
-#
-class Color:
-	defaultLight = (240, 230, 220)
-	frequency = (240, 150, 100)
-
-
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (1000,800)
-screen = pygame.display.set_mode((320,240))
-pygame.init()
-
-wifiChart = WifiChart()
-
-while True:
-	for event in pygame.event.get():
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_ESCAPE:
-				pygame.quit()
-				quit()
-
-	screen.fill((0,0,0))
-
-	top = 26
-	pygame.draw.lines(screen, Color.defaultLight, False, [(5,top), (5,230), (10,230)], 1)
-	pygame.draw.lines(screen, Color.defaultLight, False, [(305,230), (310,230), (310,top), (5,top)], 1)
-	
-	data = [
-		ScanResult(2412, -90),
-		ScanResult(2412, -50),
-		ScanResult(2412, -40),
-		ScanResult(2417, -76),
-		ScanResult(2422, -87),
-		ScanResult(2427, -54),
-		ScanResult(2427, -59),
-		ScanResult(2427, -78),
-		ScanResult(2427, -44),
-		ScanResult(2447, -91),
-		ScanResult(2447, -88),
-		ScanResult(2452, -33),
-		ScanResult(2452, -45),
-		ScanResult(2452, -55),
-		ScanResult(2462, -64),
-		ScanResult(2472, -75),
-		ScanResult(2472, -73),
-		ScanResult(2472, -71),
-		ScanResult(2472, -55),
-		ScanResult(2472, -78),
-		ScanResult(2472, -79),
-		ScanResult(2472, -80),
-		ScanResult(2484, -66)
-	]
-
-
-	wifiChart.draw(screen, data)
-	pygame.time.delay(250)
-	pygame.display.update()
-#
-#
-#
-
