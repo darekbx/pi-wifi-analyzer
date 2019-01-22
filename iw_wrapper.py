@@ -8,19 +8,23 @@ class Iw:
 	isForPI = False
 	maxCapacity = 144
 
-	regionCommand = "iw reg get"
+	regionGetCommand = "iw reg get"
+	regionSetCommand = "sudo iw reg set {0}"
 	searchArguments = "BSS|SSID|freq|signal"
 	commandCosmose = "sudo iw dev wlp4s0 scan freq 2447 | egrep \"" + searchArguments + "\""
 	commandPi = "sudo iw dev wlan0 scan | egrep \"" + searchArguments + "\""
 
+	def setRegion(self, region):
+		self.executeCommand(self.regionSetCommand.format(region))
+
 	def loadRegion(self):
 		if self.region is None:
-			output = self.executeCommand(self.regionCommand)
+			output = self.executeCommand(self.regionGetCommand)
 			self.region = IwParser().parseRegion(output)
 		return self.region
 
 	def fetchFrequencies(self):
-		output = self.executeCommand(self.regionCommand)
+		output = self.executeCommand(self.regionGetCommand)
 		return IwParser().parseFrequencies(output)
 
 	def scan(self, isPassive = True, frequency = None):

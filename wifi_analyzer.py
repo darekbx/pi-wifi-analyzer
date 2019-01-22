@@ -64,7 +64,7 @@ class WifiAnalyzer():
 
 	def runAsyncActions(self):
 		self.loadIwRegion()
-		self.scan()
+		#self.scan()
 
 	def loadIwRegion(self):
 		threading.Thread(target=self.iw.loadRegion).start()
@@ -80,6 +80,7 @@ class WifiAnalyzer():
 
 	def hideOptionsMenu(self):
 		self.isMenuDisplayed = False
+		self.refresh()
 
 	def handleKeys(self):
 		for event in pygame.event.get():
@@ -93,6 +94,10 @@ class WifiAnalyzer():
 				self.stopScan = True
 				pygame.quit()
 				quit()
+
+	def refresh(self):
+		self.iw.region = None
+		self.loadIwRegion()
 	
 	def handleDefaultEvents(self, event):
 		if event.key == pygame.K_ESCAPE:
@@ -107,7 +112,7 @@ class WifiAnalyzer():
 			''
 		if event.key == 51:
 			# Menu
-			self.isMenuDisplayed = not self.isMenuDisplayed 
+			self.isMenuDisplayed = not self.isMenuDisplayed
 		if event.key == 52:
 			# Chart type
 			''
