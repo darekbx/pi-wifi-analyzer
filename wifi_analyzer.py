@@ -36,7 +36,7 @@ class WifiAnalyzer():
 	isFullScreen = False
 	font = None
 	screen = None
-	stopScan = False
+	isScanning = True
 
 	isChart = True
 	isContinusScan = False
@@ -56,15 +56,27 @@ class WifiAnalyzer():
 			os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (1000,800)
 			self.screen = pygame.display.set_mode((320,240))
 		
-		self.erase()
+		self.eraseScreen()
 		self.optionsScreen = OptionsScreen()
 
-	def erase(self):
+	def eraseScreen(self):
 		self.screen.fill(Color.black)
+
+	def reset(self):
+		self.iw.resetScanResults()
+
+	def refresh(self):
+		self.iw.resetRegion()
+		self.loadIwRegion()
+	
+	def startStopScan(self):
+		self.isScanning = not self.isScanning
+		if self.isScanning:
+			self.scan()
 
 	def runAsyncActions(self):
 		self.loadIwRegion()
-		#self.scan()
+		self.scan()
 
 	def loadIwRegion(self):
 		threading.Thread(target=self.iw.loadRegion).start()
@@ -73,9 +85,9 @@ class WifiAnalyzer():
 		threading.Thread(target=self.scanWorker).start()
 
 	def scanWorker(self):
-		if not self.stopScan:
+		if self.isScanning:
 			self.iw.scan()
-			pygame.time.delay(500)
+			pygame.time.delay(100)
 			self.scan()
 
 	def hideOptionsMenu(self):
@@ -91,25 +103,17 @@ class WifiAnalyzer():
 					self.handleDefaultEvents(event)
 						
 			if event.type == pygame.QUIT:
-				self.stopScan = True
-				pygame.quit()
-				quit()
+				self.endProgram()
 
-	def refresh(self):
-		self.iw.region = None
-		self.loadIwRegion()
-	
 	def handleDefaultEvents(self, event):
 		if event.key == pygame.K_ESCAPE:
-			self.stopScan = True
-			pygame.quit()
-			quit()
-		if event.key == pygame.K_0:
+			self.endProgram()
+		if event.key == 49:
 			# Scan
-			''
-		if event.key == pygame.K_1:
+			self.startStopScan()
+		if event.key == 50:
 			# Reset
-			''
+			self.reset()
 		if event.key == 51:
 			# Menu
 			self.isMenuDisplayed = not self.isMenuDisplayed
@@ -117,11 +121,17 @@ class WifiAnalyzer():
 			# Chart type
 			''
 
+	def endProgram(self):
+		self.isScanning = False
+		pygame.quit()
+		quit()
+
 	def loop(self):
+		loopDelay = 50
 		while True:
 
 			self.handleKeys()
-			self.erase()
+			self.eraseScreen()
 
 			self.mainScreen.drawBorder(self.screen)
 			self.mainScreen.drawHeader(self.screen)
@@ -130,10 +140,10 @@ class WifiAnalyzer():
 				self.optionsScreen.displayMenu(self.screen)
 			else:
 				self.mainScreen.drawInfo(self.screen, self.isContinusScan, self.isActiveScan, self.iw.region)
-				self.mainScreen.drawMainMenu(self.screen, self.isChart)
+				self.mainScreen.drawMainMenu(self.screen, self.isChart, self.isScanning)
 				self.wifiChart.draw(self.screen, self.iw.scanResults)
 			
-			pygame.time.delay(50)
+			pygame.time.delay(loopDelay)
 			pygame.display.update()
 
 

@@ -12,8 +12,8 @@ class MainScreen:
 		self.font = pygame.font.SysFont("monospace", 12)
 		self.bottomMenu = BottomMenu()
 
-	def drawMainMenu(self, screen, isChart):
-		self.bottomMenu.drawMenuItem("SCAN", 0, screen)
+	def drawMainMenu(self, screen, isChart, isScanning):
+		self.bottomMenu.drawMenuItem("STOP" if isScanning else "SCAN", 0, screen)
 		self.bottomMenu.drawMenuItem("RSET", 79, screen)
 		self.bottomMenu.drawMenuItem("MENU", 158, screen)
 		self.bottomMenu.drawMenuItem("HIST" if isChart else "CHRT", 236, screen)

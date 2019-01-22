@@ -41,5 +41,11 @@ class Iw:
 			#	print r.bssid
 			#	print self.executeCommand("sudo aireplay-ng -0 1 -a {} -c a8:96:75:32:9d:ec wlp4s0".format(r.bssid))
 
+	def resetRegion(self):
+		self.region = None
+
+	def resetScanResults(self):
+		self.scanResults = []
+
 	def executeCommand(self, command):
 		return os.popen(command).read()
