@@ -6,10 +6,11 @@ class Iw:
 	scanResults = []
 	region = None
 	isForPI = False
+	maxCapacity = 144
 
 	regionCommand = "iw reg get"
 	searchArguments = "BSS|SSID|freq|signal"
-	commandCosmose = "sudo iw dev wlp4s0 scan | egrep \"" + searchArguments + "\""
+	commandCosmose = "sudo iw dev wlp4s0 scan freq 2447 | egrep \"" + searchArguments + "\""
 	commandPi = "sudo iw dev wlan0 scan | egrep \"" + searchArguments + "\""
 
 	def loadRegion(self):
@@ -27,7 +28,14 @@ class Iw:
 		output = os.popen(command.format()).read()
 		scanResult = IwParser().parseScan(output, self.searchArguments)
 		if len(scanResult) > 0:
+			dataCount = len(self.scanResults)
+			if dataCount >= self.maxCapacity:
+				self.scanResults.pop(0)
 			self.scanResults.append(scanResult)
+
+			#for r in scanResult:
+			#	print r.bssid
+			#	print self.executeCommand("sudo aireplay-ng -0 1 -a {} -c a8:96:75:32:9d:ec wlp4s0".format(r.bssid))
 
 	def executeCommand(self, command):
 		return os.popen(command).read()

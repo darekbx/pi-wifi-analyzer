@@ -78,11 +78,14 @@ class WifiAnalyzer():
 			pygame.time.delay(500)
 			self.scan()
 
+	def hideOptionsMenu(self):
+		self.isMenuDisplayed = False
+
 	def handleKeys(self):
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
 				if self.isMenuDisplayed:
-					self.optionsScreen.handleKeys(event)
+					self.optionsScreen.handleKeys(event, self.hideOptionsMenu)
 				else:
 					self.handleDefaultEvents(event)
 						
@@ -98,16 +101,16 @@ class WifiAnalyzer():
 			quit()
 		if event.key == pygame.K_0:
 			# Scan
-			a = 0
+			''
 		if event.key == pygame.K_1:
 			# Reset
-			b = 0
+			''
 		if event.key == 51:
 			# Menu
 			self.isMenuDisplayed = not self.isMenuDisplayed 
 		if event.key == 52:
 			# Chart type
-			d = 0
+			''
 
 	def loop(self):
 		while True:

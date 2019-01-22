@@ -25,7 +25,7 @@ class OptionsScreen:
 
 		self.drawMenuButtons(screen)
 
-	def handleKeys(self, event):
+	def handleKeys(self, event, callback):
 		if event.key == 49:
 			self.selectedOption = max(0, self.selectedOption - 1)
 		if event.key == 50:
@@ -33,7 +33,7 @@ class OptionsScreen:
 		if event.key == 51:
 			a = 0
 		if event.key == 52:
-			d = 0
+			callback()
 
 	def drawOption(self, label, index, screen):
 		xPos = 95
