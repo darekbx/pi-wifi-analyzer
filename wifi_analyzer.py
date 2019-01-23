@@ -5,11 +5,11 @@ import threading
 import time
 
 from iw_wrapper import Iw
-from options_screen import OptionsScreen
 from color import Color
 from wifi_chart import WifiChart
 from scan_result import ScanResult
 from main_screen import MainScreen
+from options_screen import OptionsScreen
 
 '''
 TODO:
@@ -101,9 +101,15 @@ class WifiAnalyzer():
 	def hideOptionsMenu(self, result = None):
 		self.isMenuDisplayed = False
 		if result is not None:
-			if 'method' in result:
-				self.isActiveScan = result['method'] == ''
+			self.handleResult(result)
 		self.refresh()
+
+	def handleResult(self, result):
+		if 'method' in result:
+			self.isActiveScan = result['method'] == ''
+		if 'frequency' in result:
+			# TODO: handle frequency
+			print result
 
 	def handleKeys(self):
 		for event in pygame.event.get():

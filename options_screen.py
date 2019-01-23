@@ -4,12 +4,14 @@ from color import Color
 from bottom_menu import BottomMenu
 from region_menu import RegionMenu
 from scan_method_menu import ScanMethodMenu
+from frequency_select import FrequencySelect
 
 class OptionsScreen:
 
 	bottomMenu = None
 	regionMenu = RegionMenu()
 	scanMethodMenu = ScanMethodMenu()
+	frequencySelect = FrequencySelect()
 
 	isOkActive = True
 	isBackActive = True
@@ -33,6 +35,8 @@ class OptionsScreen:
 				self.regionMenu.drawRegionsMenu(screen)
 			elif self.selectedOption == 1:
 				self.scanMethodMenu.drawMethodMenu(screen)
+			elif self.selectedOption == 2:
+				self.frequencySelect.drawFrequencyMenu(screen)
 
 		self.drawMenuButtons(screen)
 
@@ -51,6 +55,9 @@ class OptionsScreen:
 				self.regionMenu.handleKeys(event, self.subMenuGoBack)
 			elif self.selectedOption == 1:
 				self.scanMethodMenu.handleKeys(event, self.subMenuGoBack)
+			elif self.selectedOption == 2:
+				self.frequencySelect.reset()
+				self.frequencySelect.handleKeys(event, self.subMenuGoBack)
 
 	def confirmOption(self):
 		self.hideMenu = True

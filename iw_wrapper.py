@@ -28,6 +28,7 @@ class Iw:
 
 	def fetchFrequencies(self):
 		output = self.executeCommand(self.regionGetCommand)
+		print output
 		return IwParser().parseFrequencies(output)
 
 	def scan(self, isPassive = True, frequency = None):
