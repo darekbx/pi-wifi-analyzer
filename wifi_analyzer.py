@@ -43,6 +43,8 @@ class WifiAnalyzer():
 	isActiveScan = True
 	isMenuDisplayed = False
 
+	lastScanTime = 0
+
 	def createScreen(self):
 		pygame.init()
 		self.wifiChart = WifiChart()
@@ -86,12 +88,21 @@ class WifiAnalyzer():
 
 	def scanWorker(self):
 		if self.isScanning:
-			self.iw.scan()
+			scanStartTime= self.getTimeInMs()
+			self.iw.scan(self.isActiveScan, None)	
+			currentTime = self.getTimeInMs()
+			self.lastScanTime = currentTime - scanStartTime
 			pygame.time.delay(100)
 			self.scan()
 
-	def hideOptionsMenu(self):
+	def getTimeInMs(self):
+		return int(round(time.time() * 1000))
+
+	def hideOptionsMenu(self, result = None):
 		self.isMenuDisplayed = False
+		if result is not None:
+			if 'method' in result:
+				self.isActiveScan = result['method'] == ''
 		self.refresh()
 
 	def handleKeys(self):
@@ -142,6 +153,8 @@ class WifiAnalyzer():
 				self.mainScreen.drawInfo(self.screen, self.isContinusScan, self.isActiveScan, self.iw.region)
 				self.mainScreen.drawMainMenu(self.screen, self.isChart, self.isScanning)
 				self.wifiChart.draw(self.screen, self.iw.scanResults)
+				self.screen.blit(self.font.render("{}ms".format(self.lastScanTime), 1, Color.defaultLight), (240, 205))
+	
 			
 			pygame.time.delay(loopDelay)
 			pygame.display.update()

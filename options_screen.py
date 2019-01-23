@@ -3,17 +3,20 @@ import pygame
 from color import Color
 from bottom_menu import BottomMenu
 from region_menu import RegionMenu
+from scan_method_menu import ScanMethodMenu
 
 class OptionsScreen:
 
 	bottomMenu = None
 	regionMenu = RegionMenu()
+	scanMethodMenu = ScanMethodMenu()
 
 	isOkActive = True
 	isBackActive = True
 
 	selectedOption = 0
 	hideMenu = False
+	result = None
 
 	def __init__(self):
 		self.bottomMenu = BottomMenu()
@@ -28,6 +31,8 @@ class OptionsScreen:
 		else:
 			if self.selectedOption == 0:
 				self.regionMenu.drawRegionsMenu(screen)
+			elif self.selectedOption == 1:
+				self.scanMethodMenu.drawMethodMenu(screen)
 
 		self.drawMenuButtons(screen)
 
@@ -40,16 +45,19 @@ class OptionsScreen:
 			if event.key == 51:
 				self.confirmOption()
 			if event.key == 52:
-				callback()
+				callback(self.result)
 		else:
 			if self.selectedOption == 0:
 				self.regionMenu.handleKeys(event, self.subMenuGoBack)
+			elif self.selectedOption == 1:
+				self.scanMethodMenu.handleKeys(event, self.subMenuGoBack)
 
 	def confirmOption(self):
 		self.hideMenu = True
 
-	def subMenuGoBack(self):
+	def subMenuGoBack(self, result=None):
 		self.hideMenu = False
+		self.result = result
 
 	def drawOption(self, label, index, screen):
 		xPos = 95

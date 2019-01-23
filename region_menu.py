@@ -33,7 +33,6 @@ class RegionMenu:
 		screen.blit(self.font.render(label, 1, Color.defaultLight), (xPos, yPos))
 
 	def confirmRegion(self):
-		print "set region: {}".format(self.regions[self.selectedOption])
 		self.iw.setRegion(self.regions[self.selectedOption])
 
 	def handleKeys(self, event, callback):

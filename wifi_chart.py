@@ -42,9 +42,9 @@ class WifiChart:
 			for scanSample in result:
 				color = self.getFreqColor(scanSample)
 				level = (self.bottomY) + int((self.worstDBm - scanSample.level) * self.levelMultipler)
-				pygame.draw.circle(screen, color, [x, level], 1)
+				pygame.draw.line(screen, color, [x, level], [x, level], True)
 				lastResultBssidCount = lastResultBssidCount + 1
-			x = x + 2
+			x = x + 1
 		self.drawSummary(screen, lastResultBssidCount)
 
 	def getFreqColor(self, scanSample):
