@@ -10,6 +10,7 @@ from wifi_chart import WifiChart
 from scan_result import ScanResult
 from main_screen import MainScreen
 from options_screen import OptionsScreen
+from buttons_wrapper import ButtonsWrapper
 
 '''
 TODO:
@@ -28,12 +29,13 @@ Menu:
 
 class WifiAnalyzer():
 
+	buttonsWrapper = ButtonsWrapper()
 	iw = Iw()
 	wifiChart = None
 	optionsScreen = None
 	mainScreen = None
 
-	isFullScreen = False
+	isRpi = False
 	font = None
 	screen = None
 	isScanning = True
@@ -51,13 +53,14 @@ class WifiAnalyzer():
 		self.mainScreen = MainScreen()
 		self.font = pygame.font.SysFont("monospace", 14)
 
-		if self.isFullScreen:
+		if self.isRpi:
 			size = pygame.display.list_modes()[0]
 			self.screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 		else:
 			os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (1000,800)
 			self.screen = pygame.display.set_mode((320,240))
 		
+		self.handleButtons()
 		self.eraseScreen()
 		self.optionsScreen = OptionsScreen()
 
@@ -86,6 +89,15 @@ class WifiAnalyzer():
 	def scan(self):
 		threading.Thread(target=self.scanWorker).start()
 
+	def handleButtons(self):
+		threading.Thread(target=self.buttonsWorker).start()
+
+	def buttonsWorker(self):
+		try:
+			self.buttonsWrapper.run()
+		except:
+			print('Unable to start buttons worker')
+
 	def scanWorker(self):
 		if self.isScanning:
 			scanStartTime= self.getTimeInMs()
@@ -112,15 +124,25 @@ class WifiAnalyzer():
 			print result
 
 	def handleKeys(self):
-		for event in pygame.event.get():
-			if event.type == pygame.KEYDOWN:
-				if self.isMenuDisplayed:
-					self.optionsScreen.handleKeys(event, self.hideOptionsMenu)
-				else:
-					self.handleDefaultEvents(event)
-						
-			if event.type == pygame.QUIT:
-				self.endProgram()
+		if self.isRpi:
+			pressedButton = self.buttonsWrapper.getLastPressedKey()
+			if pressedButton != 0:
+				buttonEvent = pygame.event.Event(pygame.KEYDOWN)
+				buttonEvent.key = pressedButton
+				self.handleKeyEvent(buttonEvent)
+		else:
+			for event in pygame.event.get():
+				self.handleKeyEvent(event)
+	
+	def handleKeyEvent(self, event):
+		if event.type == pygame.KEYDOWN:
+			if self.isMenuDisplayed:
+				self.optionsScreen.handleKeys(event, self.hideOptionsMenu)
+			else:
+				self.handleDefaultEvents(event)
+					
+		if event.type == pygame.QUIT:
+			self.endProgram()
 
 	def handleDefaultEvents(self, event):
 		if event.key == pygame.K_ESCAPE:

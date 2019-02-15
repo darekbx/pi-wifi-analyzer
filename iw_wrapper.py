@@ -5,7 +5,7 @@ class Iw:
 
 	scanResults = []
 	region = None
-	isForPI = False
+	isForPI = True
 	maxCapacity = 288
 
 	regionGetCommand = "iw reg get"
