@@ -2,6 +2,20 @@ from scan_result import ScanResult
 
 class IwParser:
 
+	def parseChannels(self, output):
+		channels = []
+		lines = output.splitlines()
+		linesIterator = iter(lines)
+		linesIterator.next()
+		for line in linesIterator:
+			if line.find(' : ') != -1:
+				start = line.index(' : ') + 3
+				end = line.index('GHz')
+				channel = float(line[start:end])
+				channel *= 1000
+				channels.append(int(channel))
+		return channels
+
 	def parseRegion(self, output):
 		regionStart = output.index(' ') + 1
 		regionEnd = output.index(':')

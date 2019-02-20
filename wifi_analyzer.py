@@ -29,13 +29,14 @@ Menu:
 
 class WifiAnalyzer():
 
+	isRpi = False
+
 	buttonsWrapper = ButtonsWrapper()
-	iw = Iw()
+	iw = Iw(isRpi)
 	wifiChart = None
 	optionsScreen = None
 	mainScreen = None
 
-	isRpi = False
 	font = None
 	screen = None
 	isScanning = True
@@ -46,6 +47,7 @@ class WifiAnalyzer():
 	isMenuDisplayed = False
 
 	lastScanTime = 0
+	frequency = None
 
 	def createScreen(self):
 		pygame.init()
@@ -62,7 +64,7 @@ class WifiAnalyzer():
 		
 		self.handleButtons()
 		self.eraseScreen()
-		self.optionsScreen = OptionsScreen()
+		self.optionsScreen = OptionsScreen(self.isRpi)
 
 	def eraseScreen(self):
 		self.screen.fill(Color.black)
@@ -101,7 +103,7 @@ class WifiAnalyzer():
 	def scanWorker(self):
 		if self.isScanning:
 			scanStartTime= self.getTimeInMs()
-			self.iw.scan(self.isActiveScan, None)	
+			self.iw.scan(self.isActiveScan, self.frequency)	
 			currentTime = self.getTimeInMs()
 			self.lastScanTime = currentTime - scanStartTime
 			pygame.time.delay(100)
@@ -120,8 +122,7 @@ class WifiAnalyzer():
 		if 'method' in result:
 			self.isActiveScan = result['method'] == ''
 		if 'frequency' in result:
-			# TODO: handle frequency
-			print result
+			self.frequency = result['frequency']
 
 	def handleKeys(self):
 		if self.isRpi:

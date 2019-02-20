@@ -6,15 +6,16 @@ from color import Color
 
 class RegionMenu:
 
-	iw = Iw()
+	iw = None
 
 	regions = ['00', 'PL', 'CN', 'JP', 'HK', 'US', 'FR']
 	regionLoaded = False
 	font = None
 	selectedOption = -1
 
-	def __init__(self):
+	def __init__(self, isRpi):
 		pygame.init()
+		self.iw = Iw(isRpi)
 		self.font = pygame.font.SysFont("monospace", 14)
 
 	def drawRegionsMenu(self, screen):

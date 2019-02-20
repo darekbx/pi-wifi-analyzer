@@ -9,9 +9,9 @@ from frequency_select import FrequencySelect
 class OptionsScreen:
 
 	bottomMenu = None
-	regionMenu = RegionMenu()
+	regionMenu = None
+	frequencySelect = None
 	scanMethodMenu = ScanMethodMenu()
-	frequencySelect = FrequencySelect()
 
 	isOkActive = True
 	isBackActive = True
@@ -20,8 +20,10 @@ class OptionsScreen:
 	hideMenu = False
 	result = None
 
-	def __init__(self):
+	def __init__(self, isRpi):
 		self.bottomMenu = BottomMenu()
+		self.regionMenu = RegionMenu(isRpi)
+		self.frequencySelect = FrequencySelect(isRpi)
 		self.font = pygame.font.SysFont("monospace", 14)
 
 	def displayMenu(self, screen):
@@ -56,7 +58,6 @@ class OptionsScreen:
 			elif self.selectedOption == 1:
 				self.scanMethodMenu.handleKeys(event, self.subMenuGoBack)
 			elif self.selectedOption == 2:
-				self.frequencySelect.reset()
 				self.frequencySelect.handleKeys(event, self.subMenuGoBack)
 
 	def confirmOption(self):

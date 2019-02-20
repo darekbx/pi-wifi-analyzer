@@ -6,14 +6,15 @@ from color import Color
 
 class FrequencySelect:
 
-	iw = Iw()
+	iw = None
 
 	frequencies = None
 	font = None
 	selectedOption = 0
 
-	def __init__(self):
+	def __init__(self, isRpi):
 		pygame.init()
+		self.iw = Iw(isRpi)
 		self.font = pygame.font.SysFont("monospace", 14)
 
 	def reset(self):
@@ -24,7 +25,7 @@ class FrequencySelect:
 			self.loadIwFrequenciesAsync()
 		else:
 			for index,frequency in enumerate(self.frequencies):
-				self.drawOption(frequency, index, screen)
+				self.drawOption(str(frequency), index, screen)
 		
 	def drawOption(self, label, index, screen):
 		xPos = 95
@@ -40,8 +41,8 @@ class FrequencySelect:
 			self.selectedOption = max(0, self.selectedOption - 1)
 		if event.key == 50:
 			if self.frequencies is not None:
-				regionsCount = len(self.frequencies)
-				self.selectedOption = min(regionsCount, self.selectedOption + 1)
+				frequenciesCount = len(self.frequencies)
+				self.selectedOption = min(frequenciesCount, self.selectedOption + 1)
 		if event.key == 51:
 			callback(self.getFrequency())
 		if event.key == 52:
@@ -51,7 +52,7 @@ class FrequencySelect:
 		return {'frequency' : self.frequencies[self.selectedOption] }
 
 	def loadFrequenciesWrapper(self):
-		self.frequencies = self.iw.fetchFrequencies()
+		self.frequencies = self.iw.fetchChannels()
 
 	def loadIwFrequenciesAsync(self):
 		threading.Thread(target=self.loadFrequenciesWrapper).start()

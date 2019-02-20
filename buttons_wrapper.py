@@ -62,4 +62,4 @@ class ButtonsWrapper:
 					print
 				if keys == 0b01110: # exit if top and bottom pressed
 					break
-				sleep(0.3)
+				sleep(0.2)
