@@ -11,6 +11,7 @@ class FrequencySelect:
 	frequencies = None
 	font = None
 	selectedOption = 0
+	maxFrequenciesOnScreen = 8
 
 	def __init__(self, isRpi):
 		pygame.init()
@@ -24,7 +25,8 @@ class FrequencySelect:
 		if self.frequencies is None:
 			self.loadIwFrequenciesAsync()
 		else:
-			for index,frequency in enumerate(self.frequencies):
+			startIndex = min(self.selectedOption - self.maxFrequenciesOnScreen, 0)
+			for index, frequency in enumerate(self.frequencies[startIndex, self.maxFrequenciesOnScreen):
 				self.drawOption(str(frequency), index, screen)
 		
 	def drawOption(self, label, index, screen):
